@@ -1,62 +1,70 @@
 import React from 'react';
-import Tooltip from '../../components/Tooltip';
 import BarChart from '../../charts/BarChart02';
-
-// Import utilities
 import { getCssVariable } from '../../utils/Utils';
+import { useAuthStore } from '../../features/auth/store';
+import { POSTS_BY_WORKSPACE } from '../../utils/mockData';
 
 function DashboardCard09() {
+  const workspaceId = useAuthStore((s) => s.activeWorkspace?.id ?? 'ws-aurora');
+  const posts = POSTS_BY_WORKSPACE[workspaceId] ?? [];
+  const published = posts.filter((p) => p.status === 'published');
+  const scheduled = posts.filter((p) => p.status === 'scheduled');
+  const drafts = posts.filter((p) => p.status === 'draft');
+
+  const totalLikes = published.reduce((t, p) => t + (p.metrics?.likes ?? 0), 0);
+  const totalComments = published.reduce((t, p) => t + (p.metrics?.comments ?? 0), 0);
+  const totalShares = published.reduce((t, p) => t + (p.metrics?.shares ?? 0), 0);
 
   const chartData = {
-    labels: [
-      '12-01-2022', '01-01-2023', '02-01-2023',
-      '03-01-2023', '04-01-2023', '05-01-2023',
-    ],
+    labels: ['Posts'],
     datasets: [
-      // Light blue bars
       {
-        label: 'Stack 1',
-        data: [
-          6200, 9200, 6600, 8800, 5200, 9200,
-        ],
+        label: 'Likes',
+        data: [totalLikes],
         backgroundColor: getCssVariable('--color-violet-500'),
         hoverBackgroundColor: getCssVariable('--color-violet-600'),
-        barPercentage: 0.7,
-        categoryPercentage: 0.7,
-        borderRadius: 4,
+        barPercentage: 1,
+        categoryPercentage: 1,
       },
-      // Blue bars
       {
-        label: 'Stack 2',
-        data: [
-          -4000, -2600, -5350, -4000, -7500, -2000,
-        ],
-        backgroundColor: getCssVariable('--color-violet-200'),
-        hoverBackgroundColor: getCssVariable('--color-violet-300'),
-        barPercentage: 0.7,
-        categoryPercentage: 0.7,
-        borderRadius: 4,
+        label: 'Comments',
+        data: [totalComments],
+        backgroundColor: getCssVariable('--color-sky-500'),
+        hoverBackgroundColor: getCssVariable('--color-sky-600'),
+        barPercentage: 1,
+        categoryPercentage: 1,
+      },
+      {
+        label: 'Shares',
+        data: [totalShares],
+        backgroundColor: getCssVariable('--color-green-500'),
+        hoverBackgroundColor: getCssVariable('--color-green-600'),
+        barPercentage: 1,
+        categoryPercentage: 1,
       },
     ],
   };
 
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 bg-white dark:bg-gray-800 shadow-xs rounded-xl">
-      <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60 flex items-center">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Sales VS Refunds</h2>
-        <Tooltip className="ml-2" size="lg">
-          <div className="text-sm">Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.</div>
-        </Tooltip>
+      <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60">
+        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Post Interactions Breakdown</h2>
       </header>
       <div className="px-5 py-3">
-        <div className="flex items-start">
-          <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mr-2">+$6,796</div>
-          <div className="text-sm font-medium text-red-700 px-1.5 bg-red-500/20 rounded-full">-34%</div>
+        <div className="flex items-start gap-3 flex-wrap">
+          <div>
+            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">{published.length}</div>
+            <div className="text-xs text-gray-400 dark:text-gray-500 uppercase font-semibold">Published</div>
+          </div>
+          <div className="text-sm font-medium text-green-700 px-1.5 bg-green-500/20 rounded-full self-start mt-2">
+            +{scheduled.length} scheduled
+          </div>
+          <div className="text-sm font-medium text-gray-500 px-1.5 bg-gray-200 dark:bg-gray-700 rounded-full self-start mt-2">
+            {drafts.length} drafts
+          </div>
         </div>
       </div>
-      {/* Chart built with Chart.js 3 */}
       <div className="grow">
-        {/* Change the height attribute to adjust the chart height */}
         <BarChart data={chartData} width={595} height={248} />
       </div>
     </div>

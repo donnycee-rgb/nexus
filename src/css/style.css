@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=fallback');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=fallback');
 
 @import 'tailwindcss';
 @import './additional-styles/utility-patterns.css' layer(components);
@@ -25,17 +25,18 @@
   --color-gray-900: #111827;
   --color-gray-950: #030712;
 
-  --color-violet-50: #f1eeff;
-  --color-violet-100: #e6e1ff;
-  --color-violet-200: #d2cbff;
-  --color-violet-300: #b7acff;
-  --color-violet-400: #9c8cff;
-  --color-violet-500: #8470ff;
-  --color-violet-600: #755ff8;
-  --color-violet-700: #5d47de;
-  --color-violet-800: #4634b1;
-  --color-violet-900: #2f227c;
-  --color-violet-950: #1c1357;
+  /* NEXUS Burnt Orange — replaces violet completely */
+  --color-violet-50:  #fff4ee;
+  --color-violet-100: #ffe8d6;
+  --color-violet-200: #ffd0ae;
+  --color-violet-300: #ffb07d;
+  --color-violet-400: #ff8a47;
+  --color-violet-500: #e8621a;
+  --color-violet-600: #d45612;
+  --color-violet-700: #b8440d;
+  --color-violet-800: #8f330a;
+  --color-violet-900: #6a2507;
+  --color-violet-950: #3d1504;
 
   --color-sky-50: #e3f3ff;
   --color-sky-100: #d1ecff;
@@ -85,7 +86,18 @@
   --color-yellow-900: #4f3d0e;
   --color-yellow-950: #342809;
 
+  /* NEXUS platform colors */
+  --color-platform-ig: #E1306C;
+  --color-platform-tt: #FF0050;
+  --color-platform-fb: #1877F2;
+  --color-platform-x:  #E7E9EA;
+  --color-platform-yt: #FF0000;
+  --color-platform-wa: #25D366;
+  --color-platform-li: #0A66C2;
+
   --font-inter: "Inter", "sans-serif";
+  --font-display: "Syne", "sans-serif";
+  --font-mono: "JetBrains Mono", "monospace";
 
   --text-xs: 0.75rem;
   --text-xs--line-height: 1.5;
@@ -119,14 +131,6 @@
   --breakpoint-xs: 480px;
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
@@ -134,5 +138,14 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
+  }
+
+  /* NEXUS global tokens */
+  :root {
+    --accent: #E8621A;
+    --accent-hover: #D45612;
+    --accent-dim: rgba(232, 98, 26, 0.12);
+    --accent-dim-md: rgba(232, 98, 26, 0.20);
+    --accent-border: rgba(232, 98, 26, 0.35);
   }
 }

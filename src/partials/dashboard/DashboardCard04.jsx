@@ -1,37 +1,35 @@
 import React from 'react';
 import BarChart from '../../charts/BarChart01';
-
-// Import utilities
 import { getCssVariable } from '../../utils/Utils';
+import { useAuthStore } from '../../features/auth/store';
+import { ANALYTICS_BY_WORKSPACE, PLATFORM_META } from '../../utils/mockData';
 
 function DashboardCard04() {
+  const workspaceId = useAuthStore((s) => s.activeWorkspace?.id ?? 'ws-aurora');
+  const analytics = ANALYTICS_BY_WORKSPACE[workspaceId];
+  const breakdown = analytics?.platformBreakdown ?? [];
+
+  const labels = breakdown.map((b) => PLATFORM_META[b.platform]?.name ?? b.platform);
+  const followersData = breakdown.map((b) => b.followers);
+  const engagementData = breakdown.map((b) => Math.round(b.engagementRate * 1000));
 
   const chartData = {
-    labels: [
-      '12-01-2022', '01-01-2023', '02-01-2023',
-      '03-01-2023', '04-01-2023', '05-01-2023',
-    ],
+    labels,
     datasets: [
-      // Light blue bars
       {
-        label: 'Direct',
-        data: [
-          800, 1600, 900, 1300, 1950, 1700,
-        ],
-        backgroundColor: getCssVariable('--color-sky-500'),
-        hoverBackgroundColor: getCssVariable('--color-sky-600'),
+        label: 'Followers',
+        data: followersData,
+        backgroundColor: getCssVariable('--color-violet-500'),
+        hoverBackgroundColor: getCssVariable('--color-violet-600'),
         barPercentage: 0.7,
         categoryPercentage: 0.7,
         borderRadius: 4,
       },
-      // Blue bars
       {
-        label: 'Indirect',
-        data: [
-          4900, 2600, 5350, 4800, 5200, 4800,
-        ],
-        backgroundColor: getCssVariable('--color-violet-500'),
-        hoverBackgroundColor: getCssVariable('--color-violet-600'),
+        label: 'Engagement (x1000)',
+        data: engagementData,
+        backgroundColor: getCssVariable('--color-sky-500'),
+        hoverBackgroundColor: getCssVariable('--color-sky-600'),
         barPercentage: 0.7,
         categoryPercentage: 0.7,
         borderRadius: 4,
@@ -42,10 +40,8 @@ function DashboardCard04() {
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 bg-white dark:bg-gray-800 shadow-xs rounded-xl">
       <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Direct VS Indirect</h2>
+        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Followers vs Engagement by Platform</h2>
       </header>
-      {/* Chart built with Chart.js 3 */}
-      {/* Change the height attribute to adjust the chart height */}
       <BarChart data={chartData} width={595} height={248} />
     </div>
   );
