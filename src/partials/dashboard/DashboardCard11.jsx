@@ -43,10 +43,10 @@ function DashboardCard11() {
       <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60">
         <h2 className="font-semibold text-gray-800 dark:text-gray-100">Click-Through Rate by Platform</h2>
       </header>
-      <div className="px-5 py-3">
-        <div className="flex items-start">
-          <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mr-2">{ctr.toFixed(2)}%</div>
-          <div className={`text-sm font-medium px-1.5 rounded-full ${isPositive ? 'text-green-700 bg-green-500/20' : 'text-red-700 bg-red-500/20'}`}>
+      <div className="px-5 py-2">
+        <div className="flex items-center gap-2">
+          <div className="text-xl font-bold text-gray-800 dark:text-gray-100">{ctr.toFixed(2)}%</div>
+          <div className={`text-xs font-semibold px-1.5 py-0.5 rounded-full ${isPositive ? 'text-green-700 bg-green-500/20' : 'text-red-700 bg-red-500/20'}`}>
             {isPositive ? '+' : ''}{change.toFixed(1)}%
           </div>
         </div>

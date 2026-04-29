@@ -1,107 +1,83 @@
 import React from 'react';
+import { useAuthStore } from '../../features/auth/store';
+import { NOTIFICATIONS_BY_WORKSPACE } from '../../utils/mockData';
+
+const TYPE_CONFIG = {
+  message:  { bg: 'bg-violet-500', icon: <svg className="w-9 h-9 fill-current text-white" viewBox="0 0 36 36"><path d="M18 10c-4.4 0-8 3.1-8 7s3.6 7 8 7h.6l5.4 2v-4.4c1.2-1.2 2-2.8 2-4.6 0-3.9-3.6-7-8-7zm4 10.8v2.3L18.9 22H18c-3.3 0-6-2.2-6-5s2.7-5 6-5 6 2.2 6 5c0 2.2-2 3.8-2 3.8z"/></svg> },
+  publish:  { bg: 'bg-green-500',  icon: <svg className="w-9 h-9 fill-current text-white" viewBox="0 0 36 36"><path d="M15 13v-3l-5 4 5 4v-3h8a1 1 0 000-2h-8zM21 21h-8a1 1 0 000 2h8v3l5-4-5-4v3z"/></svg> },
+  approval: { bg: 'bg-yellow-500', icon: <svg className="w-9 h-9 fill-current text-white" viewBox="0 0 36 36"><path d="M18 10l-6 16h4v-6h4v6h4L18 10z"/></svg> },
+  follow:   { bg: 'bg-sky-500',    icon: <svg className="w-9 h-9 fill-current text-white" viewBox="0 0 36 36"><path d="M18 12a4 4 0 100 8 4 4 0 000-8zm0 10c-4.4 0-8 2-8 4v1h16v-1c0-2-3.6-4-8-4z"/></svg> },
+  system:   { bg: 'bg-gray-400',   icon: <svg className="w-9 h-9 fill-current text-white" viewBox="0 0 36 36"><path d="M18 10a8 8 0 100 16 8 8 0 000-16zm1 12h-2v-4h2v4zm0-6h-2v-2h2v2z"/></svg> },
+};
+
+function timeAgo(isoString) {
+  const diff = Date.now() - new Date(isoString).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
 
 function DashboardCard12() {
+  const workspaceId = useAuthStore((s) => s.activeWorkspace?.id ?? 'ws-aurora');
+  const notifications = (NOTIFICATIONS_BY_WORKSPACE[workspaceId] ?? []).slice(0, 5);
+  const unread = notifications.filter((n) => !n.read);
+  const read = notifications.filter((n) => n.read);
+
+  function renderItem(n, isLast) {
+    const cfg = TYPE_CONFIG[n.type] ?? TYPE_CONFIG.system;
+    return (
+      <li key={n.id} className="flex px-2">
+        <div className={`w-9 h-9 rounded-full shrink-0 ${cfg.bg} my-2 mr-3`}>
+          {cfg.icon}
+        </div>
+        <div className={`grow flex items-center ${!isLast ? 'border-b border-gray-100 dark:border-gray-700/60' : ''} text-sm py-2`}>
+          <div className="grow flex justify-between gap-2">
+            <div className="self-center">
+              <span className="font-medium text-gray-800 dark:text-gray-100">{n.title}</span>
+              <span className="text-gray-500 dark:text-gray-400"> — {n.body}</span>
+            </div>
+            <div className="shrink-0 self-end ml-2 text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
+              {timeAgo(n.createdAt)}
+            </div>
+          </div>
+        </div>
+      </li>
+    );
+  }
+
   return (
     <div className="col-span-full xl:col-span-6 bg-white dark:bg-gray-800 shadow-xs rounded-xl">
-      <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60">
+      <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60 flex items-center justify-between">
         <h2 className="font-semibold text-gray-800 dark:text-gray-100">Recent Activity</h2>
+        {unread.length > 0 && (
+          <span className="inline-flex items-center justify-center h-5 text-xs font-medium text-white bg-violet-500 px-2 rounded-full">
+            {unread.length} new
+          </span>
+        )}
       </header>
       <div className="p-3">
-
-        {/* Card content */}
-        {/* "Today" group */}
-        <div>
-          <header className="text-xs uppercase text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700/50 rounded-xs font-semibold p-2">Today</header>
-          <ul className="my-1">
-            {/* Item */}
-            <li className="flex px-2">
-              <div className="w-9 h-9 rounded-full shrink-0 bg-violet-500 my-2 mr-3">
-                <svg className="w-9 h-9 fill-current text-white" viewBox="0 0 36 36">
-                  <path d="M18 10c-4.4 0-8 3.1-8 7s3.6 7 8 7h.6l5.4 2v-4.4c1.2-1.2 2-2.8 2-4.6 0-3.9-3.6-7-8-7zm4 10.8v2.3L18.9 22H18c-3.3 0-6-2.2-6-5s2.7-5 6-5 6 2.2 6 5c0 2.2-2 3.8-2 3.8z" />
-                </svg>
-              </div>
-              <div className="grow flex items-center border-b border-gray-100 dark:border-gray-700/60 text-sm py-2">
-                <div className="grow flex justify-between">
-                  <div className="self-center"><a className="font-medium text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white" href="#0">Nick Mark</a> mentioned <a className="font-medium text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white" href="#0">Sara Smith</a> in a new post</div>
-                  <div className="shrink-0 self-end ml-2">
-                    <a className="font-medium text-violet-500 hover:text-violet-600 dark:hover:text-violet-400" href="#0">View<span className="hidden sm:inline"> -&gt;</span></a>
-                  </div>
-                </div>
-              </div>
-            </li>
-            {/* Item */}
-            <li className="flex px-2">
-              <div className="w-9 h-9 rounded-full shrink-0 bg-red-500 my-2 mr-3">
-                <svg className="w-9 h-9 fill-current text-white" viewBox="0 0 36 36">
-                  <path d="M25 24H11a1 1 0 01-1-1v-5h2v4h12v-4h2v5a1 1 0 01-1 1zM14 13h8v2h-8z" />
-                </svg>
-              </div>
-              <div className="grow flex items-center border-b border-gray-100 dark:border-gray-700/60 text-sm py-2">
-                <div className="grow flex justify-between">
-                  <div className="self-center">The post <a className="font-medium text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white" href="#0">Post Name</a> was removed by <a className="font-medium text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white" href="#0">Nick Mark</a></div>
-                  <div className="shrink-0 self-end ml-2">
-                    <a className="font-medium text-violet-500 hover:text-violet-600 dark:hover:text-violet-400" href="#0">View<span className="hidden sm:inline"> -&gt;</span></a>
-                  </div>
-                </div>
-              </div>
-            </li>
-            {/* Item */}
-            <li className="flex px-2">
-              <div className="w-9 h-9 rounded-full shrink-0 bg-green-500 my-2 mr-3">
-                <svg className="w-9 h-9 fill-current text-white" viewBox="0 0 36 36">
-                  <path d="M15 13v-3l-5 4 5 4v-3h8a1 1 0 000-2h-8zM21 21h-8a1 1 0 000 2h8v3l5-4-5-4v3z" />
-                </svg>
-              </div>
-              <div className="grow flex items-center text-sm py-2">
-                <div className="grow flex justify-between">
-                  <div className="self-center"><a className="font-medium text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white" href="#0">Patrick Sullivan</a> published a new <a className="font-medium text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white" href="#0">post</a></div>
-                  <div className="shrink-0 self-end ml-2">
-                    <a className="font-medium text-violet-500 hover:text-violet-600 dark:hover:text-violet-400" href="#0">View<span className="hidden sm:inline"> -&gt;</span></a>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-        {/* "Yesterday" group */}
-        <div>
-          <header className="text-xs uppercase text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700/50 rounded-xs font-semibold p-2">Yesterday</header>
-          <ul className="my-1">
-            {/* Item */}
-            <li className="flex px-2">
-              <div className="w-9 h-9 rounded-full shrink-0 bg-sky-500 my-2 mr-3">
-                <svg className="w-9 h-9 fill-current text-white" viewBox="0 0 36 36">
-                  <path d="M23 11v2.085c-2.841.401-4.41 2.462-5.8 4.315-1.449 1.932-2.7 3.6-5.2 3.6h-1v2h1c3.5 0 5.253-2.338 6.8-4.4 1.449-1.932 2.7-3.6 5.2-3.6h3l-4-4zM15.406 16.455c.066-.087.125-.162.194-.254.314-.419.656-.872 1.033-1.33C15.475 13.802 14.038 13 12 13h-1v2h1c1.471 0 2.505.586 3.406 1.455zM24 21c-1.471 0-2.505-.586-3.406-1.455-.066.087-.125.162-.194.254-.316.422-.656.873-1.028 1.328.959.878 2.108 1.573 3.628 1.788V25l4-4h-3z" />
-                </svg>
-              </div>
-              <div className="grow flex items-center border-b border-gray-100 dark:border-gray-700/60 text-sm py-2">
-                <div className="grow flex justify-between">
-                  <div className="self-center"><a className="font-medium text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white" href="#0">240+</a> users have subscribed to <a className="font-medium text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white" href="#0">Newsletter #1</a></div>
-                  <div className="shrink-0 self-end ml-2">
-                    <a className="font-medium text-violet-500 hover:text-violet-600 dark:hover:text-violet-400" href="#0">View<span className="hidden sm:inline"> -&gt;</span></a>
-                  </div>
-                </div>
-              </div>
-            </li>
-            {/* Item */}
-            <li className="flex px-2">
-              <div className="w-9 h-9 rounded-full shrink-0 bg-violet-500 my-2 mr-3">
-                <svg className="w-9 h-9 fill-current text-white" viewBox="0 0 36 36">
-                  <path d="M18 10c-4.4 0-8 3.1-8 7s3.6 7 8 7h.6l5.4 2v-4.4c1.2-1.2 2-2.8 2-4.6 0-3.9-3.6-7-8-7zm4 10.8v2.3L18.9 22H18c-3.3 0-6-2.2-6-5s2.7-5 6-5 6 2.2 6 5c0 2.2-2 3.8-2 3.8z" />
-                </svg>
-              </div>
-              <div className="grow flex items-center text-sm py-2">
-                <div className="grow flex justify-between">
-                  <div className="self-center">The post <a className="font-medium text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white" href="#0">Post Name</a> was suspended by <a className="font-medium text-gray-800 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white" href="#0">Nick Mark</a></div>
-                  <div className="shrink-0 self-end ml-2">
-                    <a className="font-medium text-violet-500 hover:text-violet-600 dark:hover:text-violet-400" href="#0">View<span className="hidden sm:inline"> -&gt;</span></a>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-
+        {unread.length > 0 && (
+          <div>
+            <header className="text-xs uppercase text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700/50 rounded-xs font-semibold p-2">
+              New
+            </header>
+            <ul className="my-1">
+              {unread.map((n, i) => renderItem(n, i === unread.length - 1))}
+            </ul>
+          </div>
+        )}
+        {read.length > 0 && (
+          <div>
+            <header className="text-xs uppercase text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700/50 rounded-xs font-semibold p-2">
+              Earlier
+            </header>
+            <ul className="my-1">
+              {read.map((n, i) => renderItem(n, i === read.length - 1))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
