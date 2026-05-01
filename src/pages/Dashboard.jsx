@@ -4,8 +4,6 @@ import Header from '../partials/Header';
 import FilterButton from '../components/DropdownFilter';
 import Datepicker from '../components/Datepicker';
 import DashboardCard01 from '../partials/dashboard/DashboardCard01';
-import DashboardCard02 from '../partials/dashboard/DashboardCard02';
-import DashboardCard03 from '../partials/dashboard/DashboardCard03';
 import DashboardCard04 from '../partials/dashboard/DashboardCard04';
 import DashboardCard05 from '../partials/dashboard/DashboardCard05';
 import DashboardCard06 from '../partials/dashboard/DashboardCard06';
@@ -21,7 +19,6 @@ import { useAuthStore } from '../features/auth/store';
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const activeWorkspace = useAuthStore((s) => s.activeWorkspace);
-  const user = useAuthStore((s) => s.user);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -31,12 +28,12 @@ function Dashboard() {
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         <main className="grow">
-          <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+          <div className="px-4 sm:px-6 lg:px-8 py-6 w-full max-w-9xl mx-auto">
 
             {/* Page header */}
-            <div className="sm:flex sm:justify-between sm:items-center mb-8">
+            <div className="sm:flex sm:justify-between sm:items-center mb-6">
               <div className="mb-4 sm:mb-0">
-                <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                   Dashboard
                 </h1>
                 {activeWorkspace && (
@@ -45,7 +42,6 @@ function Dashboard() {
                   </p>
                 )}
               </div>
-
               <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
                 <FilterButton align="right" />
                 <Datepicker align="right" />
@@ -59,12 +55,10 @@ function Dashboard() {
             </div>
 
             {/* Cards grid */}
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-12 gap-4">
 
-              {/* Row 1: 3 platform stat cards with sparklines */}
+              {/* Row 1: Combined stat strip — Instagram, TikTok, Engagement */}
               <DashboardCard01 />
-              <DashboardCard02 />
-              <DashboardCard03 />
 
               {/* Row 2: Followers vs Engagement bar + Live engagement realtime */}
               <DashboardCard04 />
